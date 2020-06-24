@@ -2,26 +2,26 @@ import java.util.*;
 import java.io.*;
 
 
-class SolverPoint {
+class SolverPoint2 {
 	int index;
 	double x;
 	double y;
 }
 
 
-public class solver_YuiKarasawa {
+public class solver_YuiKarasawa2 {
 
 	
 	private static double calcDistance(double oldx, double oldy, double newx, double newy) {
 		return Math.sqrt((newx-oldx)*(newx-oldx) + (newy-oldy)*(newy-oldy));
 	}
 	
-	private static double calcDistanceByPoint(SolverPoint p1, SolverPoint p2) {
+	private static double calcDistanceByPoint(SolverPoint2 p1, SolverPoint2 p2) {
 		return calcDistance(p1.x, p1.y, p2.x, p2.y);
 	}
 	
 	
-	private static List<SolverPoint> makeSpList(String fileName) {
+	private static List<SolverPoint2> makeSpList(String fileName) {
 
         List<String> temp = new ArrayList<String>();
         
@@ -39,11 +39,11 @@ public class solver_YuiKarasawa {
         
         
         // define list of points
-        List<SolverPoint> spList = new ArrayList<SolverPoint>();
+        List<SolverPoint2> spList = new ArrayList<SolverPoint2>();
          
         
         for (int i=1;i<temp.size(); i++) {
-            SolverPoint sp = new SolverPoint();
+            SolverPoint2 sp = new SolverPoint2();
         	String[] s = temp.get(i).split(",");
             
             sp.index = i-1;
@@ -56,7 +56,7 @@ public class solver_YuiKarasawa {
 	}
 	
 	
-	private static double calcDistances(List<SolverPoint> spList) {
+	private static double calcDistances(List<SolverPoint2> spList) {
         double sum = 0; 
     	
         // for ‚Ì‚È‚©‚É‚¢‚ê‚é
@@ -66,12 +66,10 @@ public class solver_YuiKarasawa {
 		return sum;
 	}
 	
-	private static ArrayList<Integer> tsp(double[][] graph, boolean[] v, 
+	static double tsp(double[][] graph, boolean[] v, 
 			int currPos, int n, 
-			int count, double cost, double ans, ArrayList<Integer> route, ArrayList<Integer> routeTmp) 
+			int count, double d, double ans) 
 { 
-		
-	// log
 
 	// If last node is reached and it has a link 
 	// to the starting node i.e the source then 
@@ -80,13 +78,8 @@ public class solver_YuiKarasawa {
 	// Finally return to check for more possible values 
 	if (count == n && graph[currPos][0] > 0) 
 	{ 
-		if (ans > cost + graph[currPos][0]) {
-			routeTmp = route;
-		}
-		System.out.println(ans);
-		System.out.println(route.toString());
-		System.out.println(routeTmp.toString());
-		return routeTmp; 
+		ans = Math.min(ans, d + graph[currPos][0]); 
+		return ans; 
 	} 
 
 	// BACKTRACKING STEP 
@@ -95,29 +88,24 @@ public class solver_YuiKarasawa {
 	// by 1 and cost by graph[currPos,i] value 
 	for (int i = 0; i < n; i++) 
 	{ 
-		
 		if (v[i] == false && graph[currPos][i] > 0) 
 		{ 
 
 			// Mark as visited 
 			v[i] = true; 
-			routeTmp.add(i);
-			System.out.println(routeTmp.toString());
-			route = tsp(graph, v, i, n, count + 1, 
-					cost + graph[currPos][i], ans, route, routeTmp); 
+			ans = tsp(graph, v, i, n, count + 1, 
+					d + graph[currPos][i], ans); 
 
 			// Mark ith node as unvisited 
-			v[i] = false;
-			routeTmp.remove(routeTmp.size()-1);
-
-		}
-	}
-	return route;
+			v[i] = false; 
+		} 
+	} 
+	return ans; 
 } 
 
 
 	
-	private static double[][] makeGraph(List<SolverPoint> spList) {
+	private static double[][] makeGraph(List<SolverPoint2> spList) {
 		double graph[][] = new double[spList.size()][spList.size()];
 		for (int i = 0; i<spList.size(); i++) {
 			for (int j=0; j<spList.size(); j++) {
@@ -135,7 +123,7 @@ public class solver_YuiKarasawa {
     public static void main(String[] args) {
     	
     	// make list of points by input
-    	List<SolverPoint> spList = makeSpList(args[0]);
+    	List<SolverPoint2> spList = makeSpList(args[0]);
     	
     	// ---somehow change the order---
 
@@ -151,12 +139,13 @@ public class solver_YuiKarasawa {
     	
     	ArrayList<Integer> route = new ArrayList<Integer>();
     	ArrayList<Integer> routeTmp = new ArrayList<Integer>();
-    	route = tsp(graph, v, 0, listSize, 1, 0, ans, route, routeTmp);
+		ans = tsp(graph, v, 0, listSize, 1, 0, ans); 
     	
     	// Calcurate all of distances
     	//double totalDistances = calcDistances(spList);
     	
-    	System.out.println(route.toString());
+    	//System.out.println(route.toString());
+		System.out.println(ans);
     	
     	System.out.println("Index");
         for (int i=0; i<spList.size(); i++) { // exclude start point & final destination
