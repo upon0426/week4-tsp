@@ -1,14 +1,15 @@
 import java.util.*;
 import java.io.*;
 
+
 class SolverPoint {
 	int index;
 	double x;
 	double y;
 }
 
-public class solver_YuiKarasawa {
 
+public class solver_YuiKarasawa {
 
 	
 	private static double calcDistance(double oldx, double oldy, double newx, double newy) {
